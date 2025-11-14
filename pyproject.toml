@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dcdfg"
+version = "0.1.0"
+description = "Differentiable Causal Discovery with Factor Graphs (forked and packaged)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE.md" }
+authors = [
+  { name = "Romain Lopez et al." }
+]
+dependencies = [
+  "causaldag==0.1a163",
+  "cdt==0.5.23",
+  "conditional_independence==0.1a5",
+  "networkx==2.6.3",
+  "numba==0.55.0",
+  "numpy==1.21.5",
+  "pandas==1.4.0",
+  "pytorch-lightning==1.5.10",
+  "scanpy==1.9.1",
+  "scikit-learn==1.1.2",
+  "setuptools==59.5.0",
+  "torch==1.10.2",
+  "tqdm==4.62.3",
+  "wandb==0.12.11",
+]
+
+[project.urls]
+Homepage = "https://github.com/khushidesai/dcdfg-fork"
+Source = "https://github.com/khushidesai/dcdfg-fork"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["dcdfg*", "data*"]
+
+

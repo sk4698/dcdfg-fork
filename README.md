@@ -1,4 +1,7 @@
-# Differentiable Causal Discovery with Factor Graphs
+# Forked DCD-FG
+Forked repository of the DCD-FG model (https://github.com/Genentech/dcdfg) modified to an installable Python package and custom data loading for benchmarking. 
+
+## Differentiable Causal Discovery with Factor Graphs
 
 This repository contains an implementation of the structure learning method described in ["Large-Scale Differentiable Causal Discovery of Factor Graphs"](https://arxiv.org/abs/2206.07824). 
 
