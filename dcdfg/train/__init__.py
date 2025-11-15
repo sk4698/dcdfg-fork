@@ -1,1 +1,1 @@
-from .train_dcdfg import train_dcdfg
+from .train_dcdfg import train_dcdfg, load_model_from_weights, get_predicted_adjacency_matrix

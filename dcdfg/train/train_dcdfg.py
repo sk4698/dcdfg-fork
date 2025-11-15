@@ -2,6 +2,7 @@
 # DCD-FG repository (https://github.com/Genentech/dcdfg) to use with custom data.
 
 import torch
+import numpy as np
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import EarlyStopping
 from torch.utils.data import DataLoader, random_split
@@ -221,3 +222,15 @@ def load_model_from_weights(
 
     model.load_state_dict(torch.load(model_weights_path))
     return model
+
+def get_predicted_adjacency_matrix(
+    model: pl.LightningModule
+) -> np.ndarray:
+    """
+    Get the predicted adjacency matrix from the model.
+    Args:
+        model: Model to get the predicted adjacency matrix from.
+    Returns:
+        predicted_adjacency_matrix: Predicted adjacency matrix.
+    """
+    return np.array(model.module.weight_mask.detach().cpu().numpy() > 0, dtype=int)
