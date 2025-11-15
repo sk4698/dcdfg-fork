@@ -3,14 +3,14 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "dcdfg"
+name = "dcdfg-fork"
 version = "0.1.0"
 description = "Differentiable Causal Discovery with Factor Graphs (forked and packaged)."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { file = "LICENSE.md" }
 authors = [
-  { name = "Romain Lopez et al." }
+  { name = "Khushi Desai" }
 ]
 dependencies = [
   "causaldag==0.1a163",

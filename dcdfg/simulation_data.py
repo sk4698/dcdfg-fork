@@ -19,10 +19,32 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 """
 import csv
 import os
+import pickle
 
 import numpy as np
 import torch
 from torch.utils.data import Dataset
+
+
+def _load_array_from_path(path: str) -> np.ndarray:
+    """
+    Load an array from either a .npy or .pkl file and return it as a numpy array.
+
+    Args:
+        path: Path to the file. Must end with '.npy' or '.pkl'.
+    """
+    if not (path.endswith(".npy") or path.endswith(".pkl")):
+        raise ValueError(
+            f"Unsupported file extension for {path}. Expected a '.npy' or '.pkl' file."
+        )
+
+    with open(path, "rb") as f:
+        if path.endswith(".npy"):
+            arr = np.load(f)
+        else:
+            arr = pickle.load(f)
+
+    return np.asarray(arr)
 
 
 class SimulationDataset(Dataset):
@@ -36,6 +58,7 @@ class SimulationDataset(Dataset):
         file_path,
         i_dataset,
         intervention=True,
+        data_filename=None,
         fraction_regimes_to_ignore=None,
         regimes_to_ignore=None,
         load_ignored=False,
@@ -44,12 +67,15 @@ class SimulationDataset(Dataset):
         :param str file_path: Path to the data and the DAG
         :param int i_dataset: Exemplar to use (usually in [1,10])
         :param boolean intervention: If True, use interventional data with interventional targets
+        :param str data_filename: Optional name of the data file to load. If None, use the
+                                  default 'data{i_dataset}.npy' or 'data_interv{i_dataset}.npy'.
         :param list regimes_to_ignore: Regimes that are ignored during training
         """
         super(SimulationDataset, self).__init__()
         self.file_path = file_path
         self.i_dataset = i_dataset
         self.intervention = intervention
+        self.data_filename = data_filename
         # load data
         all_data, all_masks, all_regimes = self.load_data()
         # index of all regimes, even if not used in the regimes_to_ignore case
@@ -127,19 +153,23 @@ class SimulationDataset(Dataset):
         """
         Load the mask, regimes, and data
         """
-        if self.intervention:
-            name_data = f"data_interv{self.i_dataset}.npy"
+        if self.data_filename is not None:
+            # Use the provided custom filename (can be .npy or .pkl)
+            name_data = self.data_filename
         else:
-            name_data = f"data{self.i_dataset}.npy"
+            # Fall back to the original default convention
+            if self.intervention:
+                name_data = f"data_interv{self.i_dataset}.npy"
+            else:
+                name_data = f"data{self.i_dataset}.npy"
 
         # Load data
         self.data_path = os.path.join(self.file_path, name_data)
-        data = np.load(self.data_path)
+        data = _load_array_from_path(self.data_path)
 
         # Load intervention masks and regimes
         masks = []
         if self.intervention:
-            name_data = f"data_interv{self.i_dataset}.npy"
             interv_path = os.path.join(
                 self.file_path, f"intervention{self.i_dataset}.csv"
             )
