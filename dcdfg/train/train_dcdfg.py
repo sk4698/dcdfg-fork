@@ -156,6 +156,10 @@ def train_dcdfg(
             callbacks=[early_stop_2_callback, CustomProgressBar()],
         )
         trainer_fine.fit(model, train_loader, val_loader)
+    
+    else:
+        # Still threshold the weights at the end of training
+        model.module.threshold()
 
     return model
 
@@ -233,4 +237,11 @@ def get_predicted_adjacency_matrix(
     Returns:
         predicted_adjacency_matrix: Predicted adjacency matrix.
     """
-    return np.array(model.module.weight_mask.detach().cpu().numpy() > 0, dtype=int)
+    module = model.module if hasattr(model, "module") else model
+    
+    # Ensure adjacency has been thresholded
+    if not hasattr(module, "weight_mask"):
+        module.threshold()
+    
+    W = module.weight_mask.detach().cpu().numpy()
+    return (W > 0).astype(int)
